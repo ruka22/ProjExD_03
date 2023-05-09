@@ -141,7 +141,7 @@ def main():
         for event in pg.event.get():  #なんか起きたらまとめてリストで返す
             if event.type == pg.QUIT:
                 return
-            if event.type == pg.KEYDOWN and event.key ==pg.K_SPACE:
+            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 beam = Beam(bird)  #上のbirdで同じBirdを引っ張れる
         tmr += 1
         screen.blit(bg_img, [0, 0])
