@@ -103,7 +103,7 @@ class Bomb:
     """
 
     _colors = [(255,0,0), (0,255,0), (0,0,255), (255,255,0), (255,0,255), (0,255,255)]
-    _dires = [+1, 0 +1]
+    _dires = [+1, 0, +1]
 
     def __init__(self):
         """
@@ -152,20 +152,18 @@ class Beam:  #__init__を引っ張るのはインスタンス時
 
 
 class Explosion:
-    def __init__(self, bomb:Bomb):
-        img0 = pg.image.load(f"ex03/gig/explosion.gif")
+    def __init__(self, obj:Bomb, life: int):
+        img0 = pg.image.load(f"ex03/fig/explosion.gif")
 
-        self._imgs = [img0, pg.transform.flip(img0, False, True), pg.transform.flip(img0, True, False)]
+        self._imgs = [img0, pg.transform.flip(img0, False, False)]
         self._img = self._imgs[0]
-        self._rct = self._img.get_rect()
-        self._rct.center = bomb._rct.center
-        self._life = 2
+        self._rct = self._img.get_rect(center = obj.get_rect().center)
+        self._life = life
 
     def update(self, screen: pg.Surface):
-        while self._life > 0:
-            for i in range(len(self._imgs)):
-                screen.blit(self._imgs[i])
-            self._life -= 0.5
+        self._life -= 1
+        self._img = self._imgs[self._life//10%2]
+        screen.blit(self._imgs, self._rct)
 
 
 def main():
@@ -176,7 +174,7 @@ def main():
 
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for i in range(NUM_OF_BOMS)]
-    explosions = [Explosion() for k in range(NUM_OF_BOMS)] 
+    explosions = [Explosion(Bomb,10) for k in range(NUM_OF_BOMS)] 
     beam = None
 
     tmr = 0
