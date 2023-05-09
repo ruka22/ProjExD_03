@@ -4,6 +4,8 @@ import time
 
 import pygame as pg
 
+import math
+
 
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
@@ -66,6 +68,7 @@ class Bird:
         self._img = self._imgs[(+1,0)]  #デフォルト右
         self._rct = self._img.get_rect()
         self._rct.center = xy
+        self.num_sv = [0, 0]
 
     def change_img(self, num: int, screen: pg.Surface):
         """
@@ -82,19 +85,22 @@ class Bird:
         引数1 key_lst：押下キーの真理値リスト
         引数2 screen：画面Surface
         """
-        sum_mv = [0, 0]
+        self.sum_mv = [0, 0]
         for k, mv in __class__._delta.items():
             if key_lst[k]:
                 self._rct.move_ip(mv)
-                sum_mv[0] += mv[0] #横
-                sum_mv[1] += mv[1] #縦
+                self.sum_mv[0] += mv[0] #横
+                self.sum_mv[1] += mv[1] #縦
         if check_bound(screen.get_rect(), self._rct) != (True, True):
             for k, mv in __class__._delta.items():
                 if key_lst[k]:
                     self._rct.move_ip(-mv[0], -mv[1])
-        if not(sum_mv[0] == 0 and sum_mv[1] == 0):
-            self._img = self._imgs[tuple(sum_mv)]  #
+        if not(self.sum_mv[0] == 0 and self.sum_mv[1] == 0):
+            self._img = self._imgs[tuple(self.sum_mv)]  #
         screen.blit(self._img, self._rct)
+
+    def get_direction(self):  #追加２
+        return tuple(self.sum_mv)
 
 
 class Bomb:
@@ -150,20 +156,27 @@ class Beam:  #__init__を引っ張るのはインスタンス時
         self._rct.move_ip(self._vx, self._vy)
         screen.blit(self._img, self._rct)
 
+    def get_direction(self, bird:Bird):
+        sum_mv = bird.get_direction()
+        theta = math.atan(sum_mv)
+        angle = math.degrees(theta)
+        
 
-class Explosion:
-    def __init__(self, obj:Bomb, life: int):
-        img0 = pg.image.load(f"ex03/fig/explosion.gif")
 
-        self._imgs = [img0, pg.transform.flip(img0, False, False)]
-        self._img = self._imgs[0]
-        self._rct = self._img.get_rect(center = obj.get_rect().center)
-        self._life = life
+#class Explosion:
+    """爆発エフェクト"""
+#    def __init__(self, obj:Bomb, life: int):
+#        img0 = pg.image.load(f"ex03/fig/explosion.gif")
 
-    def update(self, screen: pg.Surface):
-        self._life -= 1
-        self._img = self._imgs[self._life//10%2]
-        screen.blit(self._imgs, self._rct)
+#        self._imgs = [img0, pg.transform.flip(img0, False, False)]
+#        self._img = self._imgs[0]
+#        self._rct = self._img.get_rect(center = obj.get_rect().center)
+#        self._life = life
+#
+#    def update(self, screen: pg.Surface):
+#        self._life -= 1
+#        self._img = self._imgs[self._life//10%2]
+#        screen.blit(self._imgs, self._rct)
 
 
 def main():
@@ -174,7 +187,7 @@ def main():
 
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for i in range(NUM_OF_BOMS)]
-    explosions = [Explosion(Bomb,10) for k in range(NUM_OF_BOMS)] 
+#    explosions = [Explosion(Bomb,10) for k in range(NUM_OF_BOMS)] 
     beam = None
 
     tmr = 0
@@ -205,8 +218,8 @@ def main():
                 if beam._rct.colliderect(bomb._rct):
                     bird.change_img(6, screen)
                     beam = None
-                    Explosion.update(screen)
-                    del explosions[i]
+                    #Explosion.update(screen)
+                    #del explosions[i]
                     del bombs[1] 
         pg.display.update()
         clock.tick(1000)
