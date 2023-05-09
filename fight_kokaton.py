@@ -91,10 +91,10 @@ class Bomb:
         pg.draw.circle(self._img, color, (rad, rad), rad)
         self._img.set_colorkey((0, 0, 0))
         self._rct = self._img.get_rect()
-        self._rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
-        #self._rct.center = WIDTH/2, HEIGHT/2 #爆弾真ん中
-        self._vx, self._vy = +1, +1
-        #self._vx, self._vy = 0, 0 #爆弾動かない
+        #self._rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+        self._rct.center = WIDTH/2, HEIGHT/2 #爆弾真ん中
+        #self._vx, self._vy = +1, +1
+        self._vx, self._vy = 0, 0 #爆弾動かない
 
     def update(self, screen: pg.Surface):
         """
@@ -161,6 +161,7 @@ def main():
         if beam is not None:
             beam.update(screen)
             if bomb is not None and beam._rct.colliderect(bomb._rct):
+                bird.change_img(6, screen)
                 beam = None
                 bomb = None
         pg.display.update()
