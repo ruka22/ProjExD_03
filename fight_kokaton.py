@@ -151,6 +151,22 @@ class Beam:  #__init__を引っ張るのはインスタンス時
         screen.blit(self._img, self._rct)
 
 
+class Explosion:
+    def __init__(self, bomb:Bomb):
+        img0 = pg.image.load(f"ex03/gig/explosion.gif")
+
+        self._imgs = [img0, pg.transform.flip(img0, False, True), pg.transform.flip(img0, True, False)]
+        self._img = self._imgs[0]
+        self._rct = self._img.get_rect()
+        self._rct.center = bomb._rct.center
+        self._life = 2
+
+    def update(self, screen: pg.Surface):
+        while self._life > 0:
+            for i in range(len(self._imgs)):
+                screen.blit(self._imgs[i])
+            self._life -= 0.5
+
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -160,6 +176,7 @@ def main():
 
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for i in range(NUM_OF_BOMS)]
+    explosions = [Explosion() for k in range(NUM_OF_BOMS)] 
     beam = None
 
     tmr = 0
@@ -190,7 +207,9 @@ def main():
                 if beam._rct.colliderect(bomb._rct):
                     bird.change_img(6, screen)
                     beam = None
-                    del boms[1] 
+                    Explosion.update(screen)
+                    del explosions[i]
+                    del bombs[1] 
         pg.display.update()
         clock.tick(1000)
 
