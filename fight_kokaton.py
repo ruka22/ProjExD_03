@@ -42,16 +42,8 @@ class Bird:
         引数1 num：こうかとん画像ファイル名の番号
         引数2 xy：こうかとん画像の位置座標タプル
         """
-        #self._img = pg.transform.flip(  # 左右反転
-        #    pg.transform.rotozoom(  # 2倍に拡大
-        #        pg.image.load(f"ex03/fig/{num}.png"), 
-        #        0, 
-        #        2.0), 
-        #    True, 
-        #    False
-        #)
+
         img0 = pg.transform.rotozoom(pg.image.load(f"ex03/fig/{num}.png"), 0, 2.0)
-        #img1 = pg.image.load(f"ex03/fig/{num}.png") #右、2倍
         self._imgs = {
             (0, -1):pg.transform.rotozoom(pg.transform.flip(img0, True, False), 90, 1.0),
             (+1, -1):pg.transform.rotozoom(pg.transform.flip(img0, True, False), 45, 1.0),
@@ -137,7 +129,10 @@ class Bomb:
 
 
 class Beam:  #__init__を引っ張るのはインスタンス時
-    """Beamに関するクラス"""
+    """
+    ビームに関するクラス
+    """
+
     def __init__(self, bird:Bird):
         self._img = pg.image.load(f"ex03/fig/beam.png")
         self._rct = self._img.get_rect()
@@ -152,6 +147,9 @@ class Beam:  #__init__を引っ張るのはインスタンス時
 
 
 class Explosion:
+    """
+    爆発エフェクトのクラス
+    """
     def __init__(self, obj:Bomb, life: int):
         img0 = pg.image.load(f"ex03/fig/explosion.gif")
 
